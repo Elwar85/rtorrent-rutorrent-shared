@@ -39,5 +39,8 @@ else
     sed -i 's/auth_basic/#auth_basic/g' /etc/nginx/sites-enabled/$site
 fi
 
+[[ "$RT_GID" != "$RT_GID_current" ]] && groupmod -g ${RT_GID} rtorrent
+addgroup nginx rtorrent
+
 nginx -g "daemon off;"
 
