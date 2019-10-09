@@ -9,12 +9,10 @@ RT_GID_current=$(cat /etc/group | grep ^rtorrent | cut -d ":" -f3)
 
 # update uids and gids
 [[ "$RT_GID" != "$RT_GID_current" ]] && groupmod -g ${RT_GID} rtorrent
-if [ $? != 0 ]; then
 addgroup -g $RT_GID rtorrent
-fi
 useradd -u $RT_UID -g $RT_GID -d /home/rtorrent -m -s /bin/bash rtorrent
 if [ $? != 0 ]; then
-adduser -u $RT_UID -G rtorrent -h /home/rtorrent -D -s /bin/ash rtorrent
+    adduser -u $RT_UID -G rtorrent -h /home/rtorrent -D -s /bin/ash rtorrent
 fi
 
 # arrange dirs and configs
