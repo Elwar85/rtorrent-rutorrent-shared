@@ -5,9 +5,10 @@ set -x
 # set rtorrent user and group id
 RT_UID=${USR_ID:=1000}
 RT_GID=${GRP_ID:=1000}
+RT_GID_current=$(cat /etc/group | grep ^rtorrent | cut -d ":" -f3)
 
 # update uids and gids
-groupadd -g $RT_GID rtorrent
+[[ "$RT_GID" != "$RT_GID_current" ]] && groupmod -g ${RT_GID} rtorrent
 if [ $? != 0 ]; then
 addgroup -g $RT_GID rtorrent
 fi
