@@ -2,6 +2,10 @@
 
 set -x
 
+RT_GID=${GRP_ID:=1000}
+RT_GID_current=$(cat /etc/group | grep ^rtorrent | cut -d ":" -f3)
+[[ "$RT_GID" != "$RT_GID_current" ]] && groupmod -g ${RT_GID} rtorrent
+
 MAIN_DIR=/downloads
 RUTORRENT_DIR=$MAIN_DIR/.rutorrent
 TORRENTS_DIR=$RUTORRENT_DIR/torrents
@@ -16,10 +20,6 @@ if [ ! -d "$NGINX_LOG_DIR" ]; then
     mkdir -p $NGINX_LOG_DIR
     chown -R nginx:nginx ${NGINX_LOG_DIR}
 fi
-
-RT_GID=${GRP_ID:=1000}
-RT_GID_current=$(cat /etc/group | grep ^rtorrent | cut -d ":" -f3)
-[[ "$RT_GID" != "$RT_GID_current" ]] && groupmod -g ${RT_GID} rtorrent
 
 rm -f /etc/nginx/sites-enabled/*
 rm -rf /etc/nginx/ssl
