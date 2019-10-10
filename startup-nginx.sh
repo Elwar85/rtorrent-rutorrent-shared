@@ -20,7 +20,6 @@ fi
 RT_GID=${GRP_ID:=1000}
 RT_GID_current=$(cat /etc/group | grep ^rtorrent | cut -d ":" -f3)
 [[ "$RT_GID" != "$RT_GID_current" ]] && groupmod -g ${RT_GID} rtorrent
-addgroup nginx rtorrent
 
 rm -f /etc/nginx/sites-enabled/*
 rm -rf /etc/nginx/ssl
@@ -48,6 +47,8 @@ else
     sed -i 's/auth_basic/#auth_basic/g' /etc/nginx/sites-enabled/$site
 fi
 
+sleep 10s
+addgroup nginx rtorrent
 mkdir -p /run/nginx
 nginx -g "daemon off;"
 
