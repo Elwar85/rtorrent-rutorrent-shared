@@ -47,8 +47,6 @@ else
     sed -i 's/auth_basic/#auth_basic/g' /etc/nginx/sites-enabled/$site
 fi
 
-sleep 10s
-addgroup nginx rtorrent
 mkdir -p /run/nginx
 nginx -g "daemon off;"
 
