@@ -2,19 +2,28 @@
 
 set -x
 
-chown -R nginx:nginx /var/www/rutorrent
-cp /downloads/.htpasswd /var/www/rutorrent/
-mkdir -p /downloads/.rutorrent/torrents
-chown -R nginx:nginx /downloads/.rutorrent
-mkdir -p /downloads/.log/nginx
-chown nginx:nginx /downloads/.log/nginx
+MAIN_DIR=/downloads
+RUTORRENT_DIR=$MAIN_DIR/.rutorrent
+TORRENTS_DIR=$RUTORRENT_DIR/torrents
+NGINX_LOG_DIR=$MAIN_DIR/.log/nginx
+
+if [ ! -d "$TORRENTS_DIR" ]; then
+    mkdir -p ${TORRENTS_DIR}
+    chown -R nginx:nginx ${RUTORRENT_DIR}
+fi
+
+if [ ! -d "$NGINX_LOG_DIR" ]; then
+    mkdir -p $NGINX_LOG_DIR
+    chown -R nginx:nginx ${NGINX_LOG_DIR}
+fi
+
+RT_GID=${GRP_ID:=1000}
+RT_GID_current=$(cat /etc/group | grep ^rtorrent | cut -d ":" -f3)
+[[ "$RT_GID" != "$RT_GID_current" ]] && groupmod -g ${RT_GID} rtorrent
+addgroup nginx rtorrent
 
 rm -f /etc/nginx/sites-enabled/*
-
 rm -rf /etc/nginx/ssl
-
-rm /var/www/rutorrent/.htpasswd
-
 
 # Basic auth enabled by default
 site=rutorrent-basic.nginx
@@ -38,11 +47,6 @@ else
 # disable basic auth
     sed -i 's/auth_basic/#auth_basic/g' /etc/nginx/sites-enabled/$site
 fi
-
-RT_GID=${GRP_ID:=1000}
-RT_GID_current=$(cat /etc/group | grep ^rtorrent | cut -d ":" -f3)
-[[ "$RT_GID" != "$RT_GID_current" ]] && groupmod -g ${RT_GID} rtorrent
-addgroup nginx rtorrent
 
 mkdir -p /run/nginx
 nginx -g "daemon off;"
