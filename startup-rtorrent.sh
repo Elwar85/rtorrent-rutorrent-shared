@@ -8,7 +8,7 @@ RT_GID=${GRP_ID:=1000}
 RT_GID_current=$(getent group rtorrent | cut -d: -f3)
 
 # update uids and gids
-[[ "$RT_GID" != "$RT_GID_current" ]] && groupmod -g ${RT_GID} rtorrent
+groupmod -g ${RT_GID} rtorrent
 id -u rtorrent >/dev/null 2>&1 || \
   adduser -u "$RT_UID" -G rtorrent -h /home/rtorrent -D -s /bin/ash rtorrent
 
